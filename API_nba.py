@@ -11,18 +11,15 @@ headers = {
     'x-rapidapi-key': "383c63f739msh2bce2afef261b6ap1a42d1jsndbb1480d4f34"
     }
 
-data_game_home = []
-data_game_away = []
 data_game = []
 data_erro = []
 game = []
 
-all_games_missed = pd.read_fwf('all_games.txt', header=None)
 
-for item in range(0, len(all_games_missed)):
+for item in range(6390, 7359): #range of the GAME-ID of all games from 2019/2020 season.
     try:
         #HOME TEAM STATS
-        url = "https://api-nba-v1.p.rapidapi.com/gameDetails/" + str(all_games_missed.iloc[item][0])
+        url = "https://api-nba-v1.p.rapidapi.com/gameDetails/" + str(item)
         response = requests.request("GET", url, headers=headers)
         dict_data = json.loads(response.text)
 
@@ -37,7 +34,7 @@ for item in range(0, len(all_games_missed)):
         PTS_QTR3 = dict_data['api']['game'][0]['hTeam']['score']['linescore'][2]
         PTS_QTR4 = dict_data['api']['game'][0]['hTeam']['score']['linescore'][3]
 
-        url = "https://api-nba-v1.p.rapidapi.com/statistics/games/gameId/" + str(all_games_missed.iloc[item][0])
+        url = "https://api-nba-v1.p.rapidapi.com/statistics/games/gameId/" + str(item)
         response = requests.request("GET", url, headers=headers)
         dict_data = json.loads(response.text)
 
@@ -48,13 +45,11 @@ for item in range(0, len(all_games_missed)):
         REB = dict_data['api']['statistics'][1]['totReb']
         TOV = dict_data['api']['statistics'][1]['turnovers']
         LOC = 1
-        data_game_home.append((GAME_ID, DATE, TEAM_ABBREVIATION, WINS, LOSSES, PTS, PTS_QTR1, PTS_QTR2, PTS_QTR3, PTS_QTR4,
-                               FG_PCT, FT_PCT, FG3_PCT, AST, REB, TOV, LOC))
         data_game.append((GAME_ID, DATE, TEAM_ABBREVIATION, WINS, LOSSES, PTS, PTS_QTR1, PTS_QTR2, PTS_QTR3, PTS_QTR4,
                           FG_PCT, FT_PCT, FG3_PCT, AST, REB, TOV, LOC))
 
         #AWAY TEAM STATS
-        url = "https://api-nba-v1.p.rapidapi.com/gameDetails/" + str(all_games_missed.iloc[item][0])
+        url = "https://api-nba-v1.p.rapidapi.com/gameDetails/" + str(item)
         response = requests.request("GET", url, headers=headers)
         dict_data = json.loads(response.text)
 
@@ -69,7 +64,7 @@ for item in range(0, len(all_games_missed)):
         PTS_QTR3 = dict_data['api']['game'][0]['vTeam']['score']['linescore'][2]
         PTS_QTR4 = dict_data['api']['game'][0]['vTeam']['score']['linescore'][3]
 
-        url = "https://api-nba-v1.p.rapidapi.com/statistics/games/gameId/" + str(all_games_missed.iloc[item][0])
+        url = "https://api-nba-v1.p.rapidapi.com/statistics/games/gameId/" + str(item)
         response = requests.request("GET", url, headers=headers)
         dict_data = json.loads(response.text)
 
@@ -80,8 +75,6 @@ for item in range(0, len(all_games_missed)):
         REB = dict_data['api']['statistics'][0]['totReb']
         TOV = dict_data['api']['statistics'][0]['turnovers']
         LOC = 0
-        data_game_away.append((GAME_ID, DATE, TEAM_ABBREVIATION, WINS, LOSSES, PTS, PTS_QTR1, PTS_QTR2, PTS_QTR3, PTS_QTR4,
-                               FG_PCT, FT_PCT, FG3_PCT, AST, REB, TOV, LOC))
         data_game.append((GAME_ID, DATE, TEAM_ABBREVIATION, WINS, LOSSES, PTS, PTS_QTR1, PTS_QTR2, PTS_QTR3, PTS_QTR4,
                           FG_PCT, FT_PCT, FG3_PCT, AST, REB, TOV, LOC))
 
@@ -92,26 +85,19 @@ for item in range(0, len(all_games_missed)):
                                 columns=['GAME_ID', 'DATE', 'TEAM_ABBREVIATION', 'WINS', 'LOSSES', 'PTS', 'PTS_QTR1',
                                          'PTS_QTR2', 'PTS_QTR3', 'PTS_QTR4', 'FG_PCT', 'FT_PCT', 'FG3_PCT', 'AST',
                                          'REB', 'TOV', 'LOC'])
-        df_total.to_csv('datamissed1920_total.csv')
+        df_total.to_csv('dataset1920_total.csv')
 
 
     except:
-        print(f'ERRO: {all_games_missed.iloc[item][0]}')
-        data_erro.append(all_games_missed.iloc[item][0])
+        print(f'ERRO: {item}')
+        data_erro.append(item)
         sleep(120)
 
 
 df_total = pd.DataFrame(data_game, columns=['GAME_ID', 'DATE', 'TEAM_ABBREVIATION', 'WINS', 'LOSSES', 'PTS', 'PTS_QTR1', 'PTS_QTR2',
                                             'PTS_QTR3', 'PTS_QTR4', 'FG_PCT', 'FT_PCT', 'FG3_PCT', 'AST', 'REB', 'TOV', 'LOC'])
-df_total.to_csv('datamissed1920_total.csv')
+df_total.to_csv('dataset1920_total.csv')
 
-df_home = pd.DataFrame(data_game_home, columns=['GAME_ID', 'DATE', 'TEAM_ABBREVIATION', 'WINS', 'LOSSES', 'PTS', 'PTS_QTR1', 'PTS_QTR2',
-                                            'PTS_QTR3', 'PTS_QTR4', 'FG_PCT', 'FT_PCT', 'FG3_PCT', 'AST', 'REB', 'TOV', 'LOC'])
-df_home.to_csv('datamissed1920_home.csv')
-
-df_away = pd.DataFrame(data_game_away, columns=['GAME_ID', 'DATE', 'TEAM_ABBREVIATION', 'WINS', 'LOSSES', 'PTS', 'PTS_QTR1', 'PTS_QTR2',
-                                            'PTS_QTR3', 'PTS_QTR4', 'FG_PCT', 'FT_PCT', 'FG3_PCT', 'AST', 'REB', 'TOV', 'LOC'])
-df_away.to_csv('datamissed1920_away.csv')
 
 if data_erro is not None:
     print(data_erro)
