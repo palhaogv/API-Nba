@@ -8,7 +8,7 @@ from time import sleep
 
 headers = {
     'x-rapidapi-host': "api-nba-v1.p.rapidapi.com",
-    'x-rapidapi-key': "383c63f739msh2bce2afef261b6ap1a42d1jsndbb1480d4f34"
+    'x-rapidapi-key': "xxx"
     }
 
 data_game = []
